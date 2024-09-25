@@ -1,0 +1,65 @@
+﻿@inherits LayoutComponentBase
+@using RegionOneRecruitment.Services;
+@inject ISessionService SessionService
+@inject NavigationManager Navigation
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">RegionOneRecruitment</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        @if (!SessionService.IsUserLoggedIn())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="register">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Register
+                </NavLink>
+            </div>
+        }
+     
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="openings">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Job Openings
+            </NavLink>
+        </div>
+        @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="users">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registered Users
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        SessionService.OnLoginStateChanged += HandleLoginStateChanged;
+    }
+
+    private async void HandleLoginStateChanged()
+    {
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    public void Dispose()
+    {
+        SessionService.OnLoginStateChanged -= HandleLoginStateChanged;
+    }
+}
+
+
+

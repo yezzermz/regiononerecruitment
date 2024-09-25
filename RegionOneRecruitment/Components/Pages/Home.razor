@@ -1,0 +1,56 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@using RegionOneRecruitment.Models
+@using RegionOneRecruitment.DBContext
+@inject IDbContextFactory<DataContext> OpeningsDataContextFactory;
+
+<PageTitle>Region One Recruitment</PageTitle>
+
+<header class="hero">
+    <div>
+        <h1>Careers at Region One</h1>
+        <p>Your next opportunity awaits!</p>
+        <a href="/register" class="btn btn-primary btn-lg">Get Started</a>
+        <a href="/login" class="btn btn-light btn-lg">Login</a>
+    </div>
+</header>
+
+<div class="container mt-5">
+    <section>
+        <h2>Why Work Here?</h2>
+        <p>At Region One, we value our employees and are committed to fostering a culture of growth and innovation. Our internal job listings provide you with opportunities to advance your career and explore new roles within the organization.</p>
+        <ul>
+            <li>Access exclusive job openings for current employees</li>
+            <li>Opportunities for professional development</li>
+            <li>A supportive environment for career advancement</li>
+        </ul>
+    </section>
+
+    @if(JobListings is not null && JobListings.Count > 0)
+    {
+        <section class="mt-5">
+            <h2>Current Job Openings</h2>
+            <div class="row">
+                @foreach(Opening job in JobListings.Take(3))
+                {
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@job.JobTitle</h5>
+                                <p class="card-text text-muted">@job.JobDescription</p>
+                                <a href="/job-details/@job.OpeningId" class="btn btn-primary">View Job</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    <section class="mt-5">
+        <h2>What Our Employees Say</h2>
+        <blockquote class="blockquote">
+            <p class="mb-4">Working at Your Company has been a game changer for my career. I appreciate the support for professional growth!</p>
+            <footer class="blockquote-footer">John Smith, <cite title="Source Title">Senior Developer</cite></footer>
+        </blockquote>
+    </section>
+</div>

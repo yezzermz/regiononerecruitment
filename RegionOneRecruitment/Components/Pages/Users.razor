@@ -1,0 +1,125 @@
+﻿@page "/users"
+@using Microsoft.EntityFrameworkCore
+@using RegionOneRecruitment.Models
+@using RegionOneRecruitment.DBContext
+@inject IDbContextFactory<DataContext> UserDataContextFactory;
+
+<PageTitle>Registered Users</PageTitle>
+
+<h1>Registered Users</h1>
+
+@if (AllUsers is not null && AllUsers.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered table-light border-dark">
+            <thead>
+                <tr>
+                    <th scope="col">User ID</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Job Interests</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Resume</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col">Edit</th>
+                    @if (EditRecord)
+                    {
+                        <th scope="col">Manage</th>
+                    }
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var user in AllUsers)
+                {
+                    @if (!EditRecord)
+                    {
+                        <tr>
+                            <th scope="row">@user.UserId</th>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>@user.Phone</td>
+                            <td>@user.JobInterests</td>
+                            <td>@user.Password</td>
+                            <td> <button name="view pdf" type="button" class="btn btn-secondary" id="pdfbutton" data-pdfbytes="@Convert.ToBase64String(user.ResumeBytes ?? Array.Empty<byte>())">Show PDF</button></td>
+                            <td>@user.IsAdmin</td>
+                            <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(user)">Edit</button></td>
+                        </tr>
+                    }
+                    else
+                    {
+                        if (UserToUpdate is not null && @UserToUpdate.UserId == @user.UserId)
+                        {
+                            <tr>
+                                <th scope="row">@user.UserId</th>
+                                <td><input id="FirstName" name="FirstName" type="text" class="form-control" @bind="@user.FirstName" /></td>
+                                <td><input id="LastName" name="LastName" type="text" class="form-control" @bind="@user.LastName" /></td>
+                                <td><input id="Email" name="Email" type="text" class="form-control" @bind="@user.Email" /></td>
+                                <td><input id="Phone" name="Phone" type="text" class="form-control" @bind="@user.Phone" /></td>
+                                <td> <input id="JobInterests" name="JobInterests" type="text" class="form-control" @bind="@user.JobInterests" /></td>
+                                <td> <input id="Password" name="Password" type="text" class="form-control" @bind="@user.Password" /></td>
+                                <td><InputFile OnChange="HandleResumeUpload" accept=".pdf" class="form-control" /></td>
+                                <td>
+                                    <input type="checkbox" @bind="@UserToUpdate.IsAdmin" />
+                                </td>
+                                <td><button type="button" @onclick="CancelEdit" class="btn btn-secondary">Cancel</button></td>
+                                <td> 
+                                    <div>
+                                        <button type="button" class="btn btn-danger" @onclick="() => DeleteUser(user.UserId)">Delete</button>
+                                        <button name="submit" type="submit" class="btn btn-primary" @onclick="@UpdateUser">Save</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <th scope="row">@user.UserId</th>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Phone</td>
+                                <td>@user.JobInterests</td>
+                                <td>@user.Password</td>
+                                <td><button name="view pdf" type="button" class="btn btn-secondary" id="pdfbutton" data-pdfbytes="@user.ResumeBytes">Show PDF</button></td>
+                                <td>@user.IsAdmin</td>
+                                <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(user)">Edit</button></td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <h3>No Users Available</h3>
+}
+
+<script>
+    document.getElementById('pdfbutton').addEventListener('click', function () {
+        // Get the Base64 encoded PDF bytes from the data attribute
+        var base64Data = this.getAttribute('data-pdfbytes');
+
+        // Convert Base64 to binary string
+        var byteCharacters = atob(base64Data);
+        var byteNumbers = new Uint8Array(byteCharacters.length);
+        for (var i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        // Create a Blob from the binary data
+        var blob = new Blob([byteNumbers], { type: 'application/pdf' });
+
+        // Create a link element to open the Blob in a new tab
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.target = '_blank'; // Open in new tab
+        link.click();
+    });
+</script>

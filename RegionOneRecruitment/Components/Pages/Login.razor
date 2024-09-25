@@ -1,0 +1,25 @@
+﻿@page "/login"
+@using Microsoft.EntityFrameworkCore
+@using RegionOneRecruitment.Models;
+@using RegionOneRecruitment.DBContext
+@using RegionOneRecruitment.Services;
+@inject NavigationManager Navigation
+@inject ISessionService SessionService
+@inject IDbContextFactory<DataContext> UserDataContextFactory;
+
+<h3>Login</h3>
+
+<EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Email">Email:</label>
+        <InputText id="Email" @bind-Value="LoginModel.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Password">Password:</label>
+        <InputText id="Password" @bind-Value="LoginModel.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Login</button>
+</EditForm>
