@@ -20,5 +20,8 @@ Start the project
 | `Double Click RegionOneRecruitment.sln` | `cd RegionOneRecruitment`                |
 |                                         | `dotnet run`                             |
 
+## About the project
+- [Google Slides Presentation](https://docs.google.com/presentation/d/17kQOHlF0zMP99ZkGYfuF-FTJ5BjUGZWUBATPqMfY8bU/edit?usp=sharing)
+
 ## Authors
 - [@Jesse Ramirez](https://www.github.com/yezzermz)
