@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using RegionOneRecruitment.DBContext;
 using RegionOneRecruitment.Models;
 using System.Diagnostics;
@@ -47,6 +48,10 @@ namespace RegionOneRecruitment.Components.Pages
             StateHasChanged();
         }
 
+        public void NavigateToJob(Opening opening)
+        {
+            NavigationManager.NavigateTo($"/job-details/{opening.OpeningId}");
+        }
 
         public async Task ShowJobListings()
         {

@@ -3,6 +3,7 @@
 @using RegionOneRecruitment.Models
 @using RegionOneRecruitment.DBContext
 @using RegionOneRecruitment.Services;
+@inject NavigationManager NavigationManager;
 @inject ISessionService SessionService
 @inject IDbContextFactory<DataContext> OpeningsDataContextFactory;
 
@@ -31,7 +32,7 @@
                     <th scope="col">Posted Date</th>
                     @if (SessionService.IsUserLoggedIn() && !SessionService.IsAdmin())
                     {
-                        <th scope="col">Apply</th>
+                        <th scope="col">Details</th>
                     }
                     @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
                     {
@@ -56,7 +57,7 @@
                             <td>@opening.PostedDate</td>
                             @if (SessionService.IsUserLoggedIn() && !SessionService.IsAdmin())
                             {
-                                <td><button name="applybutton" type="submit" @onclick="() => JobApply(opening)" class="btn btn-primary">Apply</button></td>
+                                <td><button name="detailsbutton" type="submit" @onclick="() => NavigateToJob(opening)" class="btn btn-primary">Details</button></td>
                             }
                             @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
                             {

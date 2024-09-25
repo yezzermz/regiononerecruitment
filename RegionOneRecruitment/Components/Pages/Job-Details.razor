@@ -1,0 +1,57 @@
+﻿@page "/job-details/{id:int}"
+@using Microsoft.EntityFrameworkCore
+@using RegionOneRecruitment.Models
+@using RegionOneRecruitment.DBContext
+@using RegionOneRecruitment.Services;
+@inject ISessionService SessionService
+@inject NavigationManager NavigationManager;
+@inject IDbContextFactory<DataContext> OpeningsDataContextFactory;
+
+@if (showSuccessMessage)
+{
+    <div class="alert alert-success" role="alert">
+        Your information has been sent for the role, Thank You!.
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+<div class="container mt-5">
+    <h3 class="text-center">@JobOpening?.JobTitle</h3>
+
+    @if (JobOpening != null)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Position Title: @JobOpening.JobTitle</h5>
+                <p class="card-text"><strong>Description:</strong> @JobOpening.JobDescription</p>
+                <p class="card-text"><strong>Pay Rate:</strong> @JobOpening.PayRate</p>
+                <p class="card-text"><strong>Skills Required:</strong> @JobOpening.SkillsRequired</p>
+                <p class="card-text"><strong>Certifications Required:</strong> @JobOpening.CertificationsRequired</p>
+                <p class="card-text"><strong>Posted Date:</strong> @JobOpening.PostedDate</p>
+                <p class ="card-text"><strong>Position Filled:</strong> @(JobOpening.PositionFilled ? "No" : "Yes")</p>
+
+                <div class="text-center">
+                    @if(SessionService.IsUserLoggedIn())
+                    {
+                        <button class="btn btn-primary" @onclick="() => JobApply(JobOpening)">Apply Now</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" @onclick="NavigateToLogin">Login to Apply</button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-center">Loading...</p>
+    }
+</div>
+
