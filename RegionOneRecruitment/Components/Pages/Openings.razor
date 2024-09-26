@@ -9,208 +9,181 @@
 
 <PageTitle>Job Listings</PageTitle>
 
-<h1>View New Job Listings</h1>
+<div class="container m-4">
+    <h1>View New Job Listings</h1>
 
-@if (JobListings is not null && JobListings.Count > 0)
-{
-    <div class="mb-3">
-        <input type="text" @bind="searchTerm" placeholder="Search for job openings..." class="form-control" />
-        <button class="btn btn-primary mt-2" @onclick="FilterJobListings">Search</button>
-    </div>
+    @if (JobListings is not null && JobListings.Count > 0)
+    {
+            <div class="mb-3">
+                <input type="text" @bind="searchTerm" placeholder="Search for job openings..." class="form-control" />
+                <button class="btn btn-primary mt-2" @onclick="FilterJobListings">Search</button>
+            </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover table-bordered table-light border-dark">
-            <thead>
-                <tr>
-                    <th scope="col">Opening ID</th>
-                    <th scope="col">Job Title</th>
-                    <th scope="col">Job Description</th>
-                    <th scope="col">Pay Rate</th>
-                    <th scope="col">Skills Required</th>
-                    <th scope="col">Certifications Required</th>
-                    <th scope="col">Position Available</th>
-                    <th scope="col">Posted Date</th>
-                    @if (SessionService.IsUserLoggedIn() && !SessionService.IsAdmin())
-                    {
-                        <th scope="col">Details</th>
-                    }
-                    @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
-                    {
-                        <th scope="col">Edit</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-
+    
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 @foreach (var opening in JobListings)
                 {
-                    @if (!EditRecord)
-                    {
-                        <tr>
-                            <th scope="row">@opening.OpeningId</th>
-                            <td>@opening.JobTitle</td>
-                            <td>@opening.JobDescription</td>
-                            <td>@opening.PayRate</td>
-                            <td>@opening.SkillsRequired</td>
-                            <td>@opening.CertificationsRequired</td>
-                            <td>@opening.PositionFilled</td>
-                            <td>@opening.PostedDate</td>
-                            @if (SessionService.IsUserLoggedIn() && !SessionService.IsAdmin())
-                            {
-                                <td><button name="detailsbutton" type="submit" @onclick="() => NavigateToJob(opening)" class="btn btn-primary">Details</button></td>
-                            }
-                            @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
-                            {
-                                <td><button name="editbutton" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(opening)">Edit</button></td>
-                            }
-                        </tr>
-                    }
-                    else
-                    {
-                        if (OpeningToUpdate is not null && @OpeningToUpdate.OpeningId == @opening.OpeningId)
-                        {
-                            <tr>
-                                <th scope="row">@opening.OpeningId</th>
-                                <td><input id="JobTitle" name="JobTitle" type="text" class="form-control" @bind="@OpeningToUpdate.JobTitle" /></td>
-                                <td><input id="JobDescription" name="JobDescription" type="text" class="form-control" @bind="@OpeningToUpdate.JobDescription" /></td>
-                                <td><input id="PayRate" name="PayRate" type="text" class="form-control" @bind="@OpeningToUpdate.PayRate" /></td>
-                                <td><input id="SkillsRequired" name="SkillsRequired" type="text" class="form-control" @bind="@OpeningToUpdate.SkillsRequired" /></td>
-                                <td> <input id="CertificationRequired" name="CertificationRequired" type="text" class="form-control" @bind="@OpeningToUpdate.CertificationsRequired" /></td>
-                                <td>
-                                    <input type="checkbox" @bind="@OpeningToUpdate.PositionFilled" />
-                                </td>
-                                <td><input id="PostedDate" name="PostedDate" type="text" class="form-control" @bind="@OpeningToUpdate.PostedDate" /></td>
-                                <td><button type="button" @onclick="CancelEdit" class="btn btn-secondary">Cancel</button></td>
-                                <td> 
-                                    <div>
-                                        <button type="button" class="btn btn-danger" @onclick="() => DeleteOpening(opening.OpeningId)">Delete</button>
-                                        <button name="submit" type="submit" class="btn btn-primary" @onclick="@UpdateOpening">Save</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <th scope="row">@opening.OpeningId</th>
-                                <td>@opening.JobTitle</td>
-                                <td>@opening.JobDescription</td>
-                                <td>@opening.PayRate</td>
-                                <td>@opening.SkillsRequired</td>
-                                <td>@opening.CertificationsRequired</td>
-                                <td>@opening.PositionFilled</td>
-                                <td>@opening.PostedDate</td>
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@opening.JobTitle</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">ID: @opening.OpeningId</h6>
+                                <p class="card-text">@opening.JobDescription</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Pay Rate:</strong> @opening.PayRate</li>
+                                    <li class="list-group-item"><strong>Skills Required:</strong> @opening.SkillsRequired</li>
+                                    <li class="list-group-item"><strong>Certifications Required:</strong> @opening.CertificationsRequired</li>
+                                    <li class="list-group-item">
+                                        <strong>Position Filled:</strong>
+                                        @if (opening.PositionFilled)
+                                        {
+                                            <span class="text-success">Yes</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">No</span>
+                                        }
+                                    </li>
+                                    <li class="list-group-item"><strong>Posted Date:</strong> @opening.PostedDate</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                @if (!SessionService.IsAdmin())
+                                {
+                                    <button @onclick="() => NavigateToJob(opening)" class="btn btn-primary">Details</button>
+                                }
                                 @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
                                 {
-                                    <td><button name="editbutton" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(opening)">Edit</button></td>
+                                    @if (EditRecord && OpeningToUpdate?.OpeningId == opening.OpeningId)
+                                    {
+                                        <div class="mb-3">
+                                            <input @bind="OpeningToUpdate.JobTitle" class="form-control mb-2" placeholder="Job Title" />
+                                            <input @bind="OpeningToUpdate.JobDescription" class="form-control mb-2" placeholder="Job Description" />
+                                            <input @bind="OpeningToUpdate.PayRate" class="form-control mb-2" placeholder="Pay Rate" />
+                                            <input @bind="OpeningToUpdate.SkillsRequired" class="form-control mb-2" placeholder="Skills Required" />
+                                            <input @bind="OpeningToUpdate.CertificationsRequired" class="form-control mb-2" placeholder="Certifications Required" />
+                                            <div class="form-check mb-2">
+                                                <input @bind="OpeningToUpdate.PositionFilled" class="form-check-input" type="checkbox" id="positionFilled" />
+                                                <label class="form-check-label" for="positionFilled">Position Filled</label>
+                                            </div>
+                                            <input @bind="OpeningToUpdate.PostedDate" class="form-control mb-2" placeholder="Posted Date" />
+                                        </div>
+                                        <button @onclick="CancelEdit" class="btn btn-secondary me-2">Cancel</button>
+                                        <button @onclick="UpdateOpening" class="btn btn-primary me-2">Save</button>
+                                        <button @onclick="() => DeleteOpening(opening.OpeningId)" class="btn btn-danger">Delete</button>
+                                    }
+                                    else
+                                    {
+                                        <button @onclick="() => ShowEditForm(opening)" class="btn btn-primary">Edit</button>
+                                    }
                                 }
-                            </tr>
-                        }
-                    }
+                            </div>
+                        </div>
+                    </div>
                 }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <h3>No Job Listings Available</h3>
-}
-
-@if (showSuccessMessage2)
-{
-    <div class="alert alert-success" role="alert">
-        Your information has been sent for the role, Thank You!
-    </div>
-}
-
-@if (!string.IsNullOrEmpty(errorMessage2))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorMessage
-    </div>
-}
-
-@if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
-{
-    @if (showSuccessMessage)
+            </div>
+    }
+    else
+    {
+        <h3>No Job Listings Available</h3>
+    }
+</div>
+<div class="container m-4">
+    @if (showSuccessMessage2)
     {
         <div class="alert alert-success" role="alert">
-            New Job Listing Created Successfully.
+            Your information has been sent for the role, Thank You!
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(errorMessage))
+    @if (!string.IsNullOrEmpty(errorMessage2))
     {
         <div class="alert alert-danger" role="alert">
             @errorMessage
         </div>
     }
-    <div class="row mb-3">
-        <label for="JobTitle" class="col-4 col-form-label">Job Title:</label>
-        <div class="col-8">
-            <input id="JobTitle" name="JobTitle" type="text" class="form-control" @bind="@JobOpening.JobTitle" />
-        </div>
-    </div>
 
-    <div class="row mb-3">
-        <label for="JobDescription" class="col-4 col-form-label">Job Description:</label>
-        <div class="col-8">
-            <input id="JobDescription" name="JobDescription" type="text" class="form-control" @bind="@JobOpening.JobDescription" />
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label for="JobPayRate" class="col-4 col-form-label">Pay Rate:</label>
-        <div class="col-8">
-            <input id="JobPayRate" name="JobPayRate" type="text" class="form-control" @bind="@JobOpening.PayRate" />
-        </div>
-    </div>
-
-
-    <div class="row mb-3">
-        <label class="col-4 col-form-label">Job Skills:</label>
-        <div class="col-8">
-            <div class="input-group">
-                <input id="JobSkills" name="JobSkills" type="text" class="form-control" @bind="@NewJobSkill" />
-                <button type="button" class="btn btn-outline-secondary" @onclick="AddJobSkill">Add Skill</button>
+    @if (SessionService.IsUserLoggedIn() && SessionService.IsAdmin())
+    {
+        @if (showSuccessMessage)
+        {
+            <div class="alert alert-success" role="alert">
+                New Job Listing Created Successfully.
             </div>
-            @if (JobSkills != null)
-            {
-                <ul class="list-group mt-2">
-                    @foreach (var skill in JobSkills)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @skill
-                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveJobSkill(skill)">Remove</button>
-                        </li>
-                    }
-                </ul>
-            }
-        </div>
-    </div>
+        }
 
-    <div class="row mb-3">
-        <label class="col-4 col-form-label">Job Certifications:</label>
-        <div class="col-8">
-            <div class="input-group">
-                <input id="JobCerts" name="JobCerts" type="text" class="form-control" @bind="@NewCertification" />
-                <button type="button" class="btn btn-outline-secondary" @onclick="AddJobCertification">Add Certification</button>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @errorMessage
             </div>
-            @if (CertificationsRequired != null)
-            {
-                <ul class="list-group mt-2">
-                    @foreach (var cert in CertificationsRequired)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @cert
-                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveJobCertification(cert)">Remove</button>
-                        </li>
-                    }
-                </ul>
-            }
+        }
+        <div class="row mb-3">
+            <label for="JobTitle" class="col-4 col-form-label">Job Title:</label>
+            <div class="col-8">
+                <input id="JobTitle" name="JobTitle" type="text" class="form-control" @bind="@JobOpening.JobTitle" />
+            </div>
         </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary" @onclick="CreateNewJobOpeningAsync">Create</button>
-}
+        <div class="row mb-3">
+            <label for="JobDescription" class="col-4 col-form-label">Job Description:</label>
+            <div class="col-8">
+                <input id="JobDescription" name="JobDescription" type="text" class="form-control" @bind="@JobOpening.JobDescription" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="JobPayRate" class="col-4 col-form-label">Pay Rate:</label>
+            <div class="col-8">
+                <input id="JobPayRate" name="JobPayRate" type="text" class="form-control" @bind="@JobOpening.PayRate" />
+            </div>
+        </div>
+
+
+        <div class="row mb-3">
+            <label class="col-4 col-form-label">Job Skills:</label>
+            <div class="col-8">
+                <div class="input-group">
+                    <input id="JobSkills" name="JobSkills" type="text" class="form-control" @bind="@NewJobSkill" />
+                    <button type="button" class="btn btn-outline-secondary" @onclick="AddJobSkill">Add Skill</button>
+                </div>
+                @if (JobSkills != null)
+                {
+                    <ul class="list-group mt-2">
+                        @foreach (var skill in JobSkills)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @skill
+                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveJobSkill(skill)">Remove</button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-4 col-form-label">Job Certifications:</label>
+            <div class="col-8">
+                <div class="input-group">
+                    <input id="JobCerts" name="JobCerts" type="text" class="form-control" @bind="@NewCertification" />
+                    <button type="button" class="btn btn-outline-secondary" @onclick="AddJobCertification">Add Certification</button>
+                </div>
+                @if (CertificationsRequired != null)
+                {
+                    <ul class="list-group mt-2">
+                        @foreach (var cert in CertificationsRequired)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @cert
+                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveJobCertification(cert)">Remove</button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" @onclick="CreateNewJobOpeningAsync">Create</button>
+    }
+</div>

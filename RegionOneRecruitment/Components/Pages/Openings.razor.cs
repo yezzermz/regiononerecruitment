@@ -154,7 +154,7 @@ namespace RegionOneRecruitment.Components.Pages
                     Context ??= await OpeningsDataContextFactory.CreateDbContextAsync();
                     JobOpening.SkillsRequired = string.Join(",", JobSkills);
                     JobOpening.CertificationsRequired = string.Join(",", CertificationsRequired);
-                    JobOpening.PositionFilled = true;
+                    JobOpening.PositionFilled = false;
                     JobOpening.PostedDate = DateOnly.FromDateTime(DateTime.Now).ToString();
                     Context.Openings.Add(JobOpening);
                     await Context.SaveChangesAsync();
